@@ -1,5 +1,9 @@
 .DS_Store
 .venv
-data
+__pycache__/
+data/**/*.txt
+data/**/*.json
+data/**/*.jpg
+data/**/*.png
 refs.bib
 *.preview.typ
