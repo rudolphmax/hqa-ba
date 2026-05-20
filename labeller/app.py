@@ -1,8 +1,10 @@
 import csv
 from pathlib import Path
+from typing import cast
 
 import pandas as pd
 import streamlit as st
+from PIL import Image, ImageOps
 from streamlit.delta_generator import DeltaGenerator
 
 from utils import prepare_label_csv
@@ -59,64 +61,72 @@ def question(container: DeltaGenerator, name: str, desc: str, key: str) -> int:
 
 st.set_page_config(layout="wide")
 
-left_column, right_column = st.columns(2, gap="large")
+if st.session_state.index > num_documents-1:
+  st.header("You're Done!")
+  st.text("That's it! All " + str(num_documents) + " documents are labelled. You can now close this window.")
+  st.balloons()
 
-with left_column:
-  sample = samples.iloc[st.session_state.index]
+else:
+  left_column, right_column = st.columns(2, gap="large")
 
-  info = st.container(horizontal=True, horizontal_alignment="distribute")
-  info.text("Doc: " + str(sample["Num"]))
-  info.text(str(st.session_state.index + 1) + "/" + str(samples.shape[0]))
+  with left_column:
+    sample = samples.iloc[st.session_state.index]
 
-  st.image(sample["Filename"])
+    info = st.container(horizontal=True, horizontal_alignment="distribute")
+    info.text("Doc: " + str(sample["Num"]))
+    info.text(str(st.session_state.index + 1) + "/" + str(num_documents))
 
-  st.session_state.reader = st.text_input("Reader", labels.iloc[start_index-1]["Reader"], width=100)
+    img = Image.open(sample["Filename"])
+    img = ImageOps.exif_transpose(img)
+    st.image(image=cast("Image.Image", img))
 
-with right_column:
-  st.space("medium")
-  with st.form("hls_questionnaire", clear_on_submit=True):
-    q = st.container(gap="medium")
+    st.session_state.reader = st.text_input("Reader", labels.iloc[start_index-1]["Reader"], width=100)
 
-    legibility = question(q, "Legibility", "Overall, how legible is the text when first reading?", "legibility")
-    effort = question(
-      q,
-      "Effort",
-      "How much effort is required for you to read the document overall?",
-      "effort",
-    )
-    layout = question(
-      q,
-      "Layout",
-      """An overall impression of the layout of writing
-      on the page. Well organised handwriting is consistent, with elements
-      appropriately positioned in relation to each other (e.g. the position of the margin,
-      placement of letters on the baseline, spaces within and between words).""",
-      "layout",
-    )
-    letter_formation = question(
-      q,
-      "Letter Formation",
-      """An overall impression of letter formation. Well formed letters are appropriately shaped,
-      contain all necessary elements, neat letter closures and are consistent in size and slope.""",
-      "letter-formation",
-    )
-    alteration = question(
-      q,
-      "Alteration",
-      """An overall impression of the attempts made to rectify letters within words. Includes the
-      addition of elements, re-tracing  or re-writing of letters.""",
-      "alteration",
-    )
+  with right_column:
+    st.space("medium")
+    with st.form("hls_questionnaire", clear_on_submit=True):
+      q = st.container(gap="medium")
 
-    button_container = st.container(horizontal=True, horizontal_alignment="right")
+      legibility = question(q, "Legibility", "Overall, how legible is the text when first reading?", "legibility")
+      effort = question(
+        q,
+        "Effort",
+        "How much effort is required for you to read the document overall?",
+        "effort",
+      )
+      layout = question(
+        q,
+        "Layout",
+        """An overall impression of the layout of writing
+        on the page. Well organised handwriting is consistent, with elements
+        appropriately positioned in relation to each other (e.g. the position of the margin,
+        placement of letters on the baseline, spaces within and between words).""",
+        "layout",
+      )
+      letter_formation = question(
+        q,
+        "Letter Formation",
+        """An overall impression of letter formation. Well formed letters are appropriately shaped,
+        contain all necessary elements, neat letter closures and are consistent in size and slope.""",
+        "letter-formation",
+      )
+      alteration = question(
+        q,
+        "Alteration",
+        """An overall impression of the attempts made to rectify letters within words. Includes the
+        addition of elements, re-tracing  or re-writing of letters.""",
+        "alteration",
+      )
 
-    submitted = button_container.form_submit_button("Next")
-    if submitted:
-      next_doc({
-        "reader": st.session_state.reader,
-        "legibility": legibility,
-        "effort": effort,
-        "layout": layout,
-        "letter-formation": letter_formation,
-        "alteration": alteration,
-      })
+      button_container = st.container(horizontal=True, horizontal_alignment="right")
+
+      submitted = button_container.form_submit_button("Next")
+      if submitted:
+        next_doc({
+          "reader": st.session_state.reader,
+          "legibility": legibility,
+          "effort": effort,
+          "layout": layout,
+          "letter-formation": letter_formation,
+          "alteration": alteration,
+        })
