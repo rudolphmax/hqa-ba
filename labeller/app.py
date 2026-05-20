@@ -49,6 +49,7 @@ def next_doc(values: dict) -> None:
     writer.writerow(row)
 
   st.session_state.index += 1
+  st.rerun()
 
 def question(container: DeltaGenerator, name: str, desc: str, key: str) -> int:
   left, right = container.columns([2, 3])
@@ -73,50 +74,49 @@ with left_column:
 
 with right_column:
   st.space("medium")
-  c = st.container(gap="medium")
+  with st.form("hls_questionnaire", clear_on_submit=True):
+    q = st.container(gap="medium")
 
-  q = c.container(gap="medium")
-  legibility = question(q, "Legibility", "Overall, how legible is the text when first reading?", "legibility")
-  effort = question(
-    q,
-    "Effort",
-    "How much effort is required for you to read the document overall?",
-    "effort",
-  )
-  layout = question(
-    q,
-    "Layout",
-    """An overall impression of the layout of writing
-    on the page. Well organised handwriting is consistent, with elements
-    appropriately positioned in relation to each other (e.g. the position of the margin,
-    placement of letters on the baseline, spaces within and between words).""",
-    "layout",
-  )
-  letter_formation = question(
-    q,
-    "Letter Formation",
-    """An overall impression of letter formation. Well formed letters are appropriately shaped,
-    contain all necessary elements, neat letter closures and are consistent in size and slope.""",
-    "letter-formation",
-  )
-  alteration = question(
-    q,
-    "Alteration",
-    """An overall impression of the attempts made to rectify letters within words. Includes the
-    addition of elements, re-tracing  or re-writing of letters.""",
-    "alteration",
-  )
+    legibility = question(q, "Legibility", "Overall, how legible is the text when first reading?", "legibility")
+    effort = question(
+      q,
+      "Effort",
+      "How much effort is required for you to read the document overall?",
+      "effort",
+    )
+    layout = question(
+      q,
+      "Layout",
+      """An overall impression of the layout of writing
+      on the page. Well organised handwriting is consistent, with elements
+      appropriately positioned in relation to each other (e.g. the position of the margin,
+      placement of letters on the baseline, spaces within and between words).""",
+      "layout",
+    )
+    letter_formation = question(
+      q,
+      "Letter Formation",
+      """An overall impression of letter formation. Well formed letters are appropriately shaped,
+      contain all necessary elements, neat letter closures and are consistent in size and slope.""",
+      "letter-formation",
+    )
+    alteration = question(
+      q,
+      "Alteration",
+      """An overall impression of the attempts made to rectify letters within words. Includes the
+      addition of elements, re-tracing  or re-writing of letters.""",
+      "alteration",
+    )
 
-  button_container = c.container(horizontal=True, horizontal_alignment="right")
-  button_container.button(
-    "Next",
-    on_click=next_doc,
-    args=[{
-      "reader": st.session_state.reader,
-      "legibility": legibility,
-      "effort": effort,
-      "layout": layout,
-      "letter-formation": letter_formation,
-      "alteration": alteration,
-    }]
-  )
+    button_container = st.container(horizontal=True, horizontal_alignment="right")
+
+    submitted = button_container.form_submit_button("Next")
+    if submitted:
+      next_doc({
+        "reader": st.session_state.reader,
+        "legibility": legibility,
+        "effort": effort,
+        "layout": layout,
+        "letter-formation": letter_formation,
+        "alteration": alteration,
+      })
