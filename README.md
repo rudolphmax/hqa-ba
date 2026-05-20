@@ -7,7 +7,7 @@ Supervised by [Prof. Dr. Bettina Berendt](https://people.cs.kuleuven.be/~bettina
 ## Usage
 
 ```bash
-$ pip install -r requirements.txt       # install repo requirements
+pip install -r requirements.txt       # install repo requirements
 ```
 
 ### The Labeller
@@ -15,7 +15,7 @@ $ pip install -r requirements.txt       # install repo requirements
 Used to acquire quality labels on handwritten document by human readers along two standardized scales (_HLS_[^1] and _An Evaluation of Handwriting Performance_[^2]). To use on the validation dataset from `data/validation_set.csv`, run:
 
 ```bash
-$ python labeller/labeller.py           # run from project root
+streamlit labeller/app.py           # run from project root
 ```
 
 ### Generating Validation Dataset
@@ -23,7 +23,7 @@ $ python labeller/labeller.py           # run from project root
 To randomly sample a subset of the general dataset (used here for validation of the automatic labelling approach), run:
 
 ```bash
-$ python data/build_validation_set.py   # run from project root
+python data/build_validation_set.py   # run from project root
 ```
 
 
