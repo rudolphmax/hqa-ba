@@ -15,7 +15,7 @@ pip install -r requirements.txt       # install repo requirements
 Used to acquire quality labels on handwritten document by human readers along two standardized scales (_HLS_[^1] and _An Evaluation of Handwriting Performance_[^2]). To use on the validation dataset from `data/validation_set.csv`, run:
 
 ```bash
-streamlit labeller/app.py           # run from project root
+streamlit run labeller/app.py           # run from project root
 ```
 
 ### Generating Validation Dataset
