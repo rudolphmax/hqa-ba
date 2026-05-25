@@ -10,7 +10,7 @@ from streamlit.delta_generator import DeltaGenerator
 
 from utils import prepare_label_csv, preprocess_image
 
-cols = ["Num", "Filename", "Reader", "Legibility", "Effort", "Layout", "Letter Formation", "Alteration", "Formation Ziv", "Horizontal Alignment", "Vertical Alignment", "Num Lines", "Num Letters"]  # noqa: E501
+cols = ["Num", "Filename", "Reader", "Legibility", "Effort", "Layout", "Letter Formation", "Alteration", "Formation Ziv", "Horizontal Alignment", "Vertical Alignment Std", "Vertical Alignment Mean", "Num Lines", "Num Letters"]  # noqa: E501
 
 if not Path("data/validation_set.csv").is_file():
   raise Exception("No validation dataset csv found.")
@@ -67,7 +67,8 @@ def next_doc(values: dict) -> None:
     values["alteration"],
     values["formation-ziv"],
     values["hor-alignment"],
-    values["vert-alignment"],
+    values["vert-alignment-std"],
+    values["vert-alignment-mean"],
     values["num-lines"],
     values["num-letters"],
   ]
@@ -188,7 +189,8 @@ else:
             "alteration": alteration,
             "formation-ziv": np.nan,
             "hor-alignment": np.nan,
-            "vert-alignment": np.nan,
+            "vert-alignment-std":  np.nan,
+            "vert-alignment-mean": np.nan,
             "num-lines": np.nan,
             "num-letters": np.nan,
           })
@@ -200,9 +202,6 @@ else:
         If needed, Use the guideline selector to enable guidelines.
         """,
       )
-
-      with st.expander("Letter Formation Chart", expanded=True):
-        st.image("presentations/assets/zivianiEvaluationHandwritingPerformance1984_table2.png")
 
       st.segmented_control(
           "Guidelines", [ "None", "Horizontal", "Vertical" ],
@@ -284,7 +283,11 @@ else:
             "alteration": labels.iloc[st.session_state.index]["Alteration"],
             "formation-ziv": 1 - (formation_ziv / num_letters),
             "hor-alignment": hor_alignment["Hor Spacing"].std() / hor_alignment["Hor Spacing"].mean(),
-            "vert-alignment": vert_alignment["Vert Spacing"].std() / vert_alignment["Vert Spacing"].mean(),
+            "vert-alignment-std": vert_alignment["Vert Spacing"].std(),
+            "vert-alignment-mean": vert_alignment["Vert Spacing"].mean(),
             "num-lines": len(vert_alignment["Vert Spacing"]),
             "num-letters": num_letters,
           })
+
+      with st.expander("Letter Formation Chart", expanded=True):
+        st.image("presentations/assets/zivianiEvaluationHandwritingPerformance1984_table2.png")
