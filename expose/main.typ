@@ -157,7 +157,7 @@ This limited initial selection is relatively representative but will be suppleme
 
 == Data<data>
 
-The data (a set of handwritten documents) should be broad in terms of styles of handwriting and quality. Currently, data from @ICDAR2024HWD @Lee2021, and @ResearchGroupComputer is considered for usage, which would total around $2000$ individual samples. At the time of writing, multiple inquiries for additional data are pending.
+The data (a set of handwritten documents) should be broad in terms of styles of handwriting and quality. Currently, data from @ICDAR2024HWD @Lee2021, and @martiIAMdatabaseEnglishSentence2002 is considered for usage, which would total around $2000$ individual samples. At the time of writing, multiple inquiries for additional data are pending.
 
 Many approaches will require training of some form of AI model, which drastically increases the size requirements for the dataset and requires the data to be labelled. Labelling will be performed along the criteria detailed in @quality-factors, following a standardized approach that most broadly reflects all relevant factors. The methods from @zivianiEvaluationHandwritingPerformance1984 or @stefanssonFormativeEvaluationHandwriting2003a possibly together with @barnettDevelopmentHandwritingLegibility2018a are contenders. Because the datasets only contain images, fluency and speed can not be evaluated.
 
